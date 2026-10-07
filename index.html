@@ -172,6 +172,39 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align-ite
 .social a:hover{background:var(--blue)}
 .social svg{width:18px;height:18px;fill:currentColor}
 
+/* 12th anniversary pop-up */
+.anniv{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;visibility:hidden}
+.anniv.open{visibility:visible}
+.anniv-backdrop{position:absolute;inset:0;background:rgba(14,26,79,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .4s}
+.anniv.open .anniv-backdrop{opacity:1}
+.anniv-card{position:relative;width:min(100%,520px);max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain;background:var(--paper);border-radius:28px;box-shadow:0 30px 80px rgba(14,26,79,.45);opacity:0;transform:translateY(28px) scale(.94);transition:opacity .35s,transform .55s cubic-bezier(.2,1.3,.4,1)}
+.anniv.open .anniv-card{opacity:1;transform:none}
+.anniv-scene{position:relative;height:300px;background:radial-gradient(120% 90% at 50% 30%,#2b37e0 0%,var(--blue) 45%,var(--blue-deep) 100%);border-radius:28px 28px 0 0;overflow:hidden;cursor:pointer;touch-action:manipulation}
+.anniv-scene canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.anniv-fallback{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-variation-settings:var(--wide);font-weight:900;font-size:150px;letter-spacing:-.04em;text-shadow:6px 6px 0 var(--red)}
+.anniv-scene.ready .anniv-fallback{display:none}
+.anniv-hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);font-size:13px;font-weight:500;color:rgba(255,255,255,.8);background:rgba(14,26,79,.35);padding:5px 12px;border-radius:999px;white-space:nowrap;pointer-events:none}
+.anniv-close{position:absolute;top:12px;right:12px;z-index:2;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;cursor:pointer;display:grid;place-items:center;transition:background .2s}
+.anniv-close:hover{background:rgba(255,255,255,.3)}
+.anniv-close svg{width:18px;height:18px}
+.anniv-body{padding:28px clamp(22px,5vw,40px) clamp(24px,5vw,36px);text-align:center}
+.anniv-years{display:inline-block;font-size:14px;font-weight:600;color:var(--red);background:#FDECEC;padding:5px 14px;border-radius:999px;margin-bottom:14px}
+.anniv-body h2{font-size:clamp(26px,6vw,34px);margin:0 0 12px}
+.anniv-body p{margin:0 auto 24px;color:var(--ink-soft);max-width:40ch;font-size:16px}
+.anniv-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.anniv-actions .btn-line{color:var(--ink)}
+.anniv-actions .btn-line:hover{background:var(--mist)}
+.anniv-reopen{font:inherit;font-size:15px;color:rgba(255,255,255,.75);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.anniv-reopen:hover{color:#fff}
+body.modal-open{overflow:hidden}
+@media (max-width:480px){
+  .anniv{padding:12px;align-items:end}
+  .anniv-card{border-radius:24px;max-height:calc(100dvh - 24px)}
+  .anniv-scene{height:clamp(200px,34dvh,260px);border-radius:24px 24px 0 0}
+  .anniv-fallback{font-size:110px}
+  .anniv-actions .btn{flex:1 1 100%}
+}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -387,7 +420,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align-ite
 
 <footer>
   <div class="wrap">
-    <span>&copy; <span id="year">2026</span> Smallville Technologies Limited</span>
+    <span>&copy; <span id="year">2026</span> Smallville Technologies Limited. <button class="anniv-reopen" type="button" data-anniv-open>Celebrating 12 years</button></span>
     <div class="social">
       <a href="https://twitter.com/smallvilletech" aria-label="Smallville on X (Twitter)"><svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.7l-5.2-6.8L5 22H2l8.1-9.3L1.5 2h6.9l4.7 6.2L18.9 2Zm-1.2 18h1.7L7.4 3.9H5.6L17.7 20Z"/></svg></a>
       <a href="https://facebook.com/smallvilleprints" aria-label="Smallville on Facebook"><svg viewBox="0 0 24 24"><path d="M14 8.5V6.6c0-.9.6-1.1 1-1.1h2.6V1.6L14 1.5c-4 0-4.9 3-4.9 4.9v2.1H6.8v4h2.3V22.5H14V12.5h3.3l.4-4H14Z"/></svg></a>
@@ -479,5 +512,28 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align-ite
 } }
 </script>
 <script type="module" src="hero3d.js"></script>
+
+<div class="anniv" id="anniv" role="dialog" aria-modal="true" aria-labelledby="anniv-title" aria-describedby="anniv-desc" aria-hidden="true">
+  <div class="anniv-backdrop" data-anniv-close></div>
+  <div class="anniv-card">
+    <button class="anniv-close" type="button" aria-label="Close anniversary message" data-anniv-close>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="anniv-scene" id="anniv-scene" aria-hidden="true">
+      <div class="anniv-fallback">12</div>
+      <span class="anniv-hint">Tap for more confetti</span>
+    </div>
+    <div class="anniv-body">
+      <span class="anniv-years">2014 to 2026</span>
+      <h2 id="anniv-title" class="display">12 years of simple, effective solutions</h2>
+      <p id="anniv-desc">For twelve years we have printed, set up, shipped and supplied for businesses across Lagos and beyond. Thank you for trusting us with your work. Here's to the next twelve.</p>
+      <div class="anniv-actions">
+        <a class="btn btn-red" href="#contact" data-anniv-close>Work with us</a>
+        <button class="btn btn-line" type="button" data-anniv-close>Explore the site</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="anniversary.js"></script>
 </body>
 </html>
